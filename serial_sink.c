@@ -3,6 +3,8 @@
  *
  */
 
+#include <stdio.h>
+#include <string.h>
 #include "serial_sink.h"
 
 static serial_sink_t* SINKS[NUM_SINKS];
