@@ -11,6 +11,7 @@
 #include "usb/usb.h"
 #include "usb/hid.h"
 #include "usb/joymapping.h"
+#include "debug_io.h"          // Include debug system
 
 extern FIL ini_file;
 
@@ -39,7 +40,9 @@ void mist_ini_parse()
   mist_cfg.joystick_analog_mult = 128;
   mist_cfg.joystick_dead_range = 4;
   minimig_cfg.kick1x_memory_detection_patch = 1;
+  debug_io_init();   // Initialize debug io before parsing INI
   ini_parse(&mist_ini_cfg, user_io_get_core_name(), 0);
+  debug_io_set_enabled_from_ini(mist_cfg.debug_io_enabled);   // Configure debug io after parsing INI
   data_io_rom_upload(NULL, 2);   // upload done
 #endif
 }
@@ -69,7 +72,8 @@ mist_cfg_t mist_cfg = {
   .ypbpr = 0,
   .keep_video_mode = 0,
   .led_animation = 0,
-  .amiga_mod_keys = 0
+  .amiga_mod_keys = 0,
+  .debug_io_enabled = 0   // Default to disabled
 };
 
 minimig_cfg_t minimig_cfg = {
@@ -126,6 +130,7 @@ const ini_var_t mist_ini_vars[] = {
   {"ROM", (void*)ini_rom_upload, CUSTOM_HANDLER, 0, 0, 1},
   {"AMIGA_MOD_KEYS", (void*)(&(mist_cfg.amiga_mod_keys)), UINT8, 0, 3, 1},
   {"USB_STORAGE", (void*)(&(mist_cfg.usb_storage)), UINT8, 0, 1, 1},
+  {"DEBUG_IO_ENABLED", (void*)(&(mist_cfg.debug_io_enabled)), UINT8, 0, 1, 1},   // debug io 
   // [MINIMIG_CONFIG]
   {"KICK1X_MEMORY_DETECTION_PATCH", (void*)(&(minimig_cfg.kick1x_memory_detection_patch)), UINT8, 0, 1, 2},
   {"CLOCK_FREQ", (void*)(&(minimig_cfg.clock_freq)), UINT8, 0, 2, 2},
